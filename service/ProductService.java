@@ -10,15 +10,15 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 
-@Component // 해당 클래스의 객체 생성 -> IOC(제어의 역전) container에 저장
+//@Component // 해당 클래스의 객체 생성 -> IOC(제어의 역전) container에 저장
 @Service
 public class ProductService {
 
-    @Autowired
-    private final com.sparta.selectshop2.repository.ProductRepository ProductRepository;
+    private final ProductRepository productRepository;
 
+    @Autowired
     public ProductService(ProductRepository ProductRepository) {
-        this.ProductRepository = ProductRepository;
+        this.productRepository = ProductRepository;
     }
 
 //    @Autowired
@@ -30,30 +30,33 @@ public class ProductService {
 //        this.productRepository = productRepository;
 //    }
 
-    public Product createProduct(ProductRequestDto requestDto) {
-// 요청받은 DTO 로 DB에 저장할 객체 만들기
-        Product product = new Product(requestDto);
+    public Product createProduct(ProductRequestDto requestDto, Long userId ) {
+        // 요청받은 DTO 로 DB에 저장할 객체 만들기
+        Product product = new Product(requestDto, userId);
 
-        ProductRepository.save(product);
+        productRepository.save(product);
 
         return product;
     }
 
     public Product updateProduct(Long id, ProductMypriceRequestDto requestDto) {
-        Product product = ProductRepository.findById(id).orElseThrow(() -> new NullPointerException("해당 아이디가 존재하지 않습니다."));
+        Product product = productRepository.findById(id).orElseThrow(() -> new NullPointerException("해당 아이디가 존재하지 않습니다."));
 
 
         int myprice = requestDto.getMyprice();
         product.setMyprice(myprice);
-        ProductRepository.save(product);
+        productRepository.save(product);
 
         return product;
     }
 
-    public List<Product> getProducts() {
-        List<Product> products;
-        products = ProductRepository.findAll();
+    // 회원 ID 로 등록된 상품 조회
+    public List<Product> getProducts(Long userId) {
+        return productRepository.findAllByUserId(userId);
+    }
 
-        return products;
+    // 관리자용 상품 전체 조회
+    public List<Product> getAllProducts() {
+        return  productRepository.findAll();
     }
 }
