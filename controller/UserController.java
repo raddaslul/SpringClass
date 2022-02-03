@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.sparta.selectshop2.dto.SignupRequestDto;
 import com.sparta.selectshop2.service.KakaoUserService;
 import com.sparta.selectshop2.service.UserService;
+import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -11,16 +12,17 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 @Controller
+@AllArgsConstructor
 public class UserController {
 
     private final UserService userService;
     private final KakaoUserService kakaoUserService;
 
-    @Autowired
-    public UserController(UserService userService, KakaoUserService kakaoUserService) {
-        this.userService = userService;
-        this.kakaoUserService = kakaoUserService;
-    }
+//    @Autowired // @AllArgsConstructor로 해결됨
+//    public UserController(UserService userService, KakaoUserService kakaoUserService) {
+//        this.userService = userService;
+//        this.kakaoUserService = kakaoUserService;
+//    }
 
     // 회원 로그인 페이지
     @GetMapping("/user/login")

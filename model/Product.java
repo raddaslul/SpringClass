@@ -1,6 +1,7 @@
 package com.sparta.selectshop2.model;
 
 import com.sparta.selectshop2.dto.ProductRequestDto;
+import com.sparta.selectshop2.validator.ProductValidator;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -39,7 +40,10 @@ public class Product {
 
     // 관심 상품 생성 시 이용합니다.
     public Product(ProductRequestDto requestDto, Long userId) {
-// 관심상품을 등록한 회원 테이블 Id 저장
+    // 입력값 Validation
+        ProductValidator.validateProductInput(requestDto, userId);
+
+// 관심상품을 등록한 회원 Id 저장
         this.userId = userId;
         this.title = requestDto.getTitle();
         this.image = requestDto.getImage();
@@ -47,4 +51,8 @@ public class Product {
         this.lprice = requestDto.getLprice();
         this.myprice = 0;
     }
+
+
+
+
 }
