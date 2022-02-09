@@ -4,23 +4,23 @@ import com.sparta.selectshop2.dto.ProductMypriceRequestDto;
 import com.sparta.selectshop2.dto.ProductRequestDto;
 import com.sparta.selectshop2.model.Product;
 import com.sparta.selectshop2.repository.ProductRepository;
-import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-
 @Service
-@RequiredArgsConstructor
 public class ProductService {
 
     private final ProductRepository productRepository;
     public static final int MIN_MY_PRICE = 100;
 
-//    @Autowired
-//    public ProductService(ProductRepository productRepository) {
-//        this.productRepository = productRepository;
-//    }
+    @Autowired
+    public ProductService(ProductRepository productRepository) {
+        this.productRepository = productRepository;
+    }
 
     public Product createProduct(ProductRequestDto requestDto, Long userId ) {
 // 요청받은 DTO 로 DB에 저장할 객체 만들기
@@ -47,12 +47,20 @@ public class ProductService {
     }
 
     // 회원 ID 로 등록된 상품 조회
-    public List<Product> getProducts(Long userId) {
-        return productRepository.findAllByUserId(userId);
+    public Page<Product> getProducts(Long userId, int page, int size, String sortBy, boolean isAsc) {
+        Sort.Direction direction = isAsc ? Sort.Direction.ASC : Sort.Direction.DESC;
+        Sort sort = Sort.by(direction, sortBy);
+        Pageable pageable = PageRequest.of(page, size, sort);
+
+        return productRepository.findAllByUserId(userId, pageable);
     }
 
     // (관리자용) 상품 전체 조회
-    public List<Product> getAllProducts() {
-        return productRepository.findAll();
+    public Page<Product> getAllProducts(int page, int size, String sortBy, boolean isAsc) {
+        Sort.Direction direction = isAsc ? Sort.Direction.ASC : Sort.Direction.DESC;
+        Sort sort = Sort.by(direction, sortBy);
+        Pageable pageable = PageRequest.of(page, size, sort);
+
+        return productRepository.findAll(pageable);
     }
 }

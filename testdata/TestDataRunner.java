@@ -1,11 +1,13 @@
-package com.sparta.selectshop2;
+package com.sparta.selectshop2.testdata;
 
 
 import com.sparta.selectshop2.dto.ItemDto;
 import com.sparta.selectshop2.model.Product;
+import com.sparta.selectshop2.model.User;
 import com.sparta.selectshop2.model.UserRoleEnum;
 import com.sparta.selectshop2.repository.ProductRepository;
 import com.sparta.selectshop2.repository.UserRepository;
+import com.sparta.selectshop2.service.ItemSearchService;
 import com.sparta.selectshop2.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.ApplicationArguments;
@@ -17,6 +19,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.sparta.selectshop2.service.ProductService.MIN_MY_PRICE;
 
 
 @Component
