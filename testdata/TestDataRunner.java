@@ -2,9 +2,11 @@ package com.sparta.selectshop2.testdata;
 
 
 import com.sparta.selectshop2.dto.ItemDto;
+import com.sparta.selectshop2.model.Folder;
 import com.sparta.selectshop2.model.Product;
 import com.sparta.selectshop2.model.User;
 import com.sparta.selectshop2.model.UserRoleEnum;
+import com.sparta.selectshop2.repository.FolderRepository;
 import com.sparta.selectshop2.repository.ProductRepository;
 import com.sparta.selectshop2.repository.UserRepository;
 import com.sparta.selectshop2.service.ItemSearchService;
@@ -30,6 +32,9 @@ public class TestDataRunner implements ApplicationRunner {
 
     @Autowired
     ProductRepository productRepository;
+
+    @Autowired
+    FolderRepository folderRepository;
 
     @Autowired
     UserRepository userRepository;
@@ -90,6 +95,8 @@ public class TestDataRunner implements ApplicationRunner {
         }
 
         productRepository.saveAll(productList);
+        Folder folder = new Folder(searchWord, user);
+        folderRepository.save(folder);
     }
 
     public int getRandomNumber(int min, int max) {

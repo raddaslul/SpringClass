@@ -11,6 +11,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,31 +27,40 @@ public class FolderService {
             FolderRepository folderRepository,
             ProductRepository productRepository
     ) {
-        this.folderRepository= folderRepository;
-        this.productRepository= productRepository;
+        this.folderRepository = folderRepository;
+        this.productRepository = productRepository;
     }
 
-    // 로그인한 회원에 폴더를 등록
+    // 로그인한 회원에 폴더들 등록
+    @Transactional
     public List<Folder> addFolders(List<String> folderNames, User user) {
-
-        List<Folder> existFolderList = folderRepository.findAllByUserAndNameIn(user, folderNames);
-        List<Folder> folderList = new ArrayList<>();
-
+        List<Folder> savedFolderList = new ArrayList<>();
         for (String folderName : folderNames) {
-            if (!isExistFolderName(folderName, existFolderList)) {
-                Folder folder = new Folder(folderName, user);
-                folderList.add(folder);
-            }
+            Folder folder = createFolderOrThrow(folderName, user);
+            savedFolderList.add(folder);
         }
-        return folderRepository.saveAll(folderList); // 객체를 또 생성하지 말고, 위에 생성된 배열 객체에 덮어쓰기
+
+        return savedFolderList;
+    }
+
+    public Folder createFolderOrThrow(String folderName, User user) {
+// 입력으로 들어온 폴더 이름이 이미 존재하는 경우, Exception 발생
+        boolean isExistFolder = folderRepository.existsByUserAndName(user, folderName);
+        if (isExistFolder) {
+            throw new IllegalArgumentException("중복된 폴더명을 제거해 주세요! 폴더명: " + folderName);
+        }
+
+// 폴더명 저장
+        Folder folder = new Folder(folderName, user);
+        return folderRepository.save(folder);
     }
 
     // 로그인한 회원이 등록된 모든 폴더 조회
     public List<Folder> getFolders(User user) {
-       return folderRepository.findAllByUser(user);
+        return folderRepository.findAllByUser(user);
     }
 
-    // 회원 ID가 소유한 폴더에 저장되어 있는 상품들 조회
+    // 회원 ID 가 소유한 폴더에 저장되어 있는 상품들 조회
     public Page<Product> getProductsInFolder(
             Long folderId,
             int page,
@@ -59,20 +69,10 @@ public class FolderService {
             boolean isAsc,
             User user
     ) {
-        Long userId = user.getId();
         Sort.Direction direction = isAsc ? Sort.Direction.ASC : Sort.Direction.DESC;
         Sort sort = Sort.by(direction, sortBy);
         Pageable pageable = PageRequest.of(page, size, sort);
+        Long userId = user.getId();
         return productRepository.findAllByUserIdAndFolderList_Id(userId, folderId, pageable);
-    }
-
-    private boolean isExistFolderName(String folderName, List<Folder> existFolderList) {
-        for (Folder existfolder : existFolderList) {
-            String existName = existfolder.getName();
-            if(folderName.equals(existName)) {
-                return false;
-            }
-        }
-        return true;
     }
 }
