@@ -6,7 +6,6 @@ import com.sparta.selectshop2.model.Product;
 import com.sparta.selectshop2.model.User;
 import com.sparta.selectshop2.security.UserDetailsImpl;
 import com.sparta.selectshop2.service.FolderService;
-import lombok.Getter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
