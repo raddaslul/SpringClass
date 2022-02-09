@@ -1,5 +1,8 @@
-//package com.sparta.selectshop2;
+//package com.sparta.selectshop2.prac;
 //
+//import com.sparta.selectshop2.dto.ProductMypriceRequestDto;
+//import com.sparta.selectshop2.dto.ProductRequestDto;
+//import com.sparta.selectshop2.model.Product;
 //import lombok.RequiredArgsConstructor;
 //import org.springframework.web.bind.annotation.*;
 //import java.sql.*;
