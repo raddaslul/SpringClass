@@ -4,6 +4,7 @@ package com.sparta.selectshop2.controller;
 import com.sparta.selectshop2.dto.ProductMypriceRequestDto;
 import com.sparta.selectshop2.dto.ProductRequestDto;
 import com.sparta.selectshop2.model.Product;
+import com.sparta.selectshop2.model.User;
 import com.sparta.selectshop2.model.UserRoleEnum;
 import com.sparta.selectshop2.security.UserDetailsImpl;
 import com.sparta.selectshop2.service.ProductService;
@@ -69,5 +70,17 @@ public class ProductController {
     ) {
         page = page -1;
         return productService.getAllProducts(page, size, sortBy, isAsc);
+    }
+
+    // 관심 상품 등록
+    @PostMapping("/api/products/{productId}/folder")
+    public Long addFolder(
+            @PathVariable Long productId,
+            @RequestParam Long folderId,
+            @AuthenticationPrincipal UserDetailsImpl userDetails
+    ){
+        User user = userDetails.getUser();
+        Product product = productService.addFolder(productId, folderId, user);
+        return product.getId();
     }
 }
