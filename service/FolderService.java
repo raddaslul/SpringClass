@@ -32,12 +32,15 @@ public class FolderService {
 
     // 로그인한 회원에 폴더를 등록
     public List<Folder> addFolders(List<String> folderNames, User user) {
+
+        List<Folder> existFolderList = folderRepository.findAllByUserAndNameIn(user, folderNames);
         List<Folder> folderList = new ArrayList<>();
 
         for (String folderName : folderNames) {
-            Folder folder = new Folder(folderName, user);
-//            Folder savedFolder = folderRepository.save(folder);
-            folderList.add(folder);
+            if (!isExistFolderName(folderName, existFolderList)) {
+                Folder folder = new Folder(folderName, user);
+                folderList.add(folder);
+            }
         }
         return folderRepository.saveAll(folderList); // 객체를 또 생성하지 말고, 위에 생성된 배열 객체에 덮어쓰기
     }
@@ -61,5 +64,15 @@ public class FolderService {
         Sort sort = Sort.by(direction, sortBy);
         Pageable pageable = PageRequest.of(page, size, sort);
         return productRepository.findAllByUserIdAndFolderList_Id(userId, folderId, pageable);
+    }
+
+    private boolean isExistFolderName(String folderName, List<Folder> existFolderList) {
+        for (Folder existfolder : existFolderList) {
+            String existName = existfolder.getName();
+            if(folderName.equals(existName)) {
+                return false;
+            }
+        }
+        return true;
     }
 }
